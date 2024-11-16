@@ -1,9 +1,8 @@
 use crate::types::Theme;
+use codee::string::JsonSerdeCodec;
 use leptos::*;
-use leptos::logging::log;
 use leptos_use::storage::use_local_storage;
-use leptos_use::utils::JsonCodec;
-use leptos_use::{use_media_query, use_preferred_dark};
+use leptos_use::use_preferred_dark;
 
 /// Define a constant for the local storage key used to store the theme setting.
 const STORAGE_KEY: &'static str = "theme";
@@ -64,17 +63,25 @@ pub fn use_theme() -> RwSignal<Theme> {
 ///                     Defaults to `true`.
 /// * `children` - The child components that will consume the theme context.
 #[component]
+#[allow(unused_braces, unused_variables)]
+#[allow(unused_variables)]
 pub fn ThemeProvider(
     #[prop(default = false)] use_data_attribute: bool,
     #[prop(default = true)] enable_system: bool,
     children: Children,
 ) -> impl IntoView {
-    let is_dark_preferred_signal = use_media_query("(prefers-color-scheme: dark)");
-    let prefers_dark = move || if is_dark_preferred_signal.get() { true } else { false };
+    let is_dark_preferred_signal = use_preferred_dark();
+    let prefers_dark = move || {
+        if is_dark_preferred_signal.get() {
+            true
+        } else {
+            false
+        }
+    };
 
     // Attempt to retrieve the theme from local storage
     let (theme_storage_state, set_theme_storage_state, _) =
-        use_local_storage::<Theme, JsonCodec>(STORAGE_KEY);
+        use_local_storage::<Theme, JsonSerdeCodec>(STORAGE_KEY);
 
     // Determine the initial theme from local storage
     let initial_theme = theme_storage_state.get();
