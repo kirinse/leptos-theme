@@ -84,7 +84,7 @@ pub fn ThemeProvider(
         use_local_storage::<Theme, JsonSerdeCodec>(STORAGE_KEY);
 
     // Determine the initial theme from local storage
-    let initial_theme = theme_storage_state.get();
+    let initial_theme = theme_storage_state.get_untracked();
 
     // Initialize the theme state with the determined initial theme
     let theme_state = RwSignal::new(initial_theme);
